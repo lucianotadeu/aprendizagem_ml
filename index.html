@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jornada de Aprendizagem: ML Supervisionado com IA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Harmony (Warm Neutrals with Muted Blue Accent) -->
+    <!-- Application Structure Plan: The single-page "Learning Journey" structure is enhanced with integrated Gemini API features. The core thematic sections are maintained, but are now augmented with dynamic content generation. An "Explain Topic" button is added to the interactive roadmap's content panel. "Generate Example" buttons are added to the Key Concepts cards. A new "Project Suggester" section is introduced before the methodology. This structure was chosen to embed AI assistance directly within the context of the existing content, making it a natural extension of the learning flow rather than a separate tool. -->
+    <!-- Visualization & Content Choices: 
+        - Course Topics -> Goal: Organize/Inform/Explain -> Viz: Interactive stepper + Dynamic Text Area -> Interaction: Clicking a step updates the panel; a new button calls Gemini API to populate a sub-panel with a detailed explanation. Justification: Deepens understanding on demand. Method: Vanilla JS, Fetch API.
+        - Core Concepts -> Goal: Compare/Illustrate -> Viz: Side-by-side cards + Dynamic Code Snippets -> Interaction: Buttons call Gemini API to generate practical Python examples for classification and regression. Justification: Connects theory to practice instantly. Method: Vanilla JS, Fetch API.
+        - Project Idea -> Goal: Inspire/Apply -> Viz: Dedicated section with a button -> Interaction: Button calls Gemini API to generate a complete project brief. Justification: Provides a tangible capstone goal for students. Method: Vanilla JS, Fetch API.
+        - Bias vs. Variance -> Goal: Explain Relationship -> Viz: Line Chart -> Interaction: Tooltips on hover. Library: Chart.js.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+            color: #212529;
+        }
+        .active-step {
+            background-color: #2563eb !important;
+            color: white !important;
+            border-color: #2563eb !important;
+        }
+        .step-connector {
+            width: 2px;
+            height: 100%;
+            background-color: #d1d5db;
+            position: absolute;
+            left: 1.25rem;
+            top: 2.5rem;
+            transform: translateX(-50%);
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .gemini-output {
+            background-color: #f0f4ff;
+            border-left: 4px solid #4f46e5;
+            padding: 1rem;
+            margin-top: 1.5rem;
+            border-radius: 0.25rem;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: monospace;
+            font-size: 0.875rem;
+        }
+        .loader {
+            width: 24px;
+            height: 24px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Quiz Styles */
+        .quiz-option {
+            transition: all 0.2s ease-in-out;
+        }
+        .quiz-option.correct {
+            background-color: #dcfce7;
+            border-color: #22c55e;
+            color: #166534;
+        }
+        .quiz-option.incorrect {
+            background-color: #fee2e2;
+            border-color: #ef4444;
+            color: #991b1b;
+        }
+        .quiz-option:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        .progress-bar {
+            background-color: #e5e7eb;
+            border-radius: 0.375rem;
+            overflow: hidden;
+        }
+        .progress-bar-inner {
+            height: 100%;
+            background-color: #2563eb;
+            transition: width 0.5s ease-in-out;
+        }
+
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-white shadow-sm">
+        <div class="container mx-auto px-6 py-8 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-800">Aprendizado de Máquina Supervisionado</h1>
+            <p class="mt-3 text-lg md:text-xl text-gray-600">Dos Fundamentos à Construção de Modelos Preditivos com IA</p>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+        
+        <section id="intro" class="mb-16 text-center max-w-4xl mx-auto">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">Bem-vindos à nossa Jornada de Aprendizagem!</h2>
+            <p class="text-gray-700 leading-relaxed">
+                Esta disciplina foi desenhada para transformar sua curiosidade em habilidade. Vamos mergulhar no universo da Inteligência Artificial, ensinando máquinas a aprender com dados para prever o futuro. Ao final do semestre, você será capaz de construir, treinar e avaliar seus próprios modelos preditivos, utilizando as ferramentas mais modernas do mercado e com o auxílio de IA para aprofundar seus conhecimentos.
+            </p>
+        </section>
+
+        <section id="roadmap" class="mb-16">
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-10">O Roteiro do Conhecimento</h2>
+            <div class="flex flex-col md:flex-row gap-8 md:gap-12">
+                <nav id="steps-nav" class="md:w-1/3 lg:w-1/4">
+                    <div class="relative">
+                        <div class="step-connector"></div>
+                        <ul class="space-y-4"></ul>
+                    </div>
+                </nav>
+                <div id="content-panel" class="md:w-2/3 lg:w-3/4 bg-white p-8 rounded-xl shadow-lg min-h-[300px]">
+                </div>
+            </div>
+        </section>
+
+        <section id="key-concepts" class="mb-16">
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-10">Conceitos Fundamentais</h2>
+            <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                <div class="bg-white p-8 rounded-xl shadow-lg flex flex-col">
+                    <h3 class="text-2xl font-bold text-blue-600 mb-4">Classificação</h3>
+                    <p class="text-gray-700 mb-4 flex-grow">O objetivo é prever uma **categoria** ou um rótulo discreto. O modelo aprende a partir de dados rotulados e os classifica em grupos predefinidos.</p>
+                    <button id="generate-classification-example" class="mt-4 w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">✨ Gerar Exemplo Prático</button>
+                    <div id="classification-example-output" class="mt-4"></div>
+                </div>
+                <div class="bg-white p-8 rounded-xl shadow-lg flex flex-col">
+                    <h3 class="text-2xl font-bold text-green-600 mb-4">Regressão</h3>
+                    <p class="text-gray-700 mb-4 flex-grow">O objetivo é prever um **valor numérico contínuo**. O modelo aprende a relação entre as variáveis de entrada e uma variável de saída numérica.</p>
+                    <button id="generate-regression-example" class="mt-4 w-full bg-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-700 transition-colors">✨ Gerar Exemplo Prático</button>
+                    <div id="regression-example-output" class="mt-4"></div>
+                </div>
+            </div>
+
+            <!-- NOVO CONTEÚDO ADICIONADO ABAIXO -->
+            <div class="max-w-5xl mx-auto bg-white p-8 rounded-xl shadow-lg mt-12">
+                <h3 class="text-3xl font-bold text-gray-800 mb-6 border-b pb-4">Classificação versus Regressão: Um Aprofundamento</h3>
+                
+                <h4 class="text-2xl font-semibold text-gray-700 mt-6 mb-3">Introdução</h4>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Nos últimos anos, o campo do aprendizado de máquina tem se expandido rapidamente, oferecendo soluções inovadoras para uma variedade de problemas em diversas áreas. Entre as técnicas mais utilizadas estão os algoritmos de classificação e regressão, que desempenham papéis cruciais no desenvolvimento de modelos preditivos. Este texto tem como objetivo explorar as diferenças entre esses dois tipos de algoritmos, com foco em sua aplicação prática no contexto de vendas, e fornecer orientações sobre como implementar métodos de validação e avaliação para garantir a eficácia dos modelos desenvolvidos.
+                </p>
+
+                <h4 class="text-2xl font-semibold text-gray-700 mt-6 mb-3">Desenvolvimento</h4>
+                
+                <h5 class="text-xl font-semibold text-gray-700 mt-4 mb-2">Conceitos Básicos</h5>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    No aprendizado de máquina, a escolha entre algoritmos de classificação e regressão depende fundamentalmente do tipo de problema que se deseja resolver. Classificação refere-se ao processo de identificar a qual categoria um novo dado pertence, com base em um conjunto de dados de treinamento previamente rotulado. Por exemplo, em um contexto de vendas, um algoritmo de classificação pode ser usado para prever se um cliente potencial comprará ou não um produto, categorizando a previsão como 'compra' ou 'não compra'.
+                </p>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Por outro lado, a regressão é usada quando o objetivo é prever um valor contínuo. No contexto de vendas, um exemplo clássico seria prever o valor de vendas para o próximo trimestre com base em dados históricos. Aqui, o resultado não é uma categoria, mas um valor numérico.
+                </p>
+
+                <h5 class="text-xl font-semibold text-gray-700 mt-4 mb-2">Teorias e Algoritmos Consagrados</h5>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Classificação e regressão são suportadas por uma variedade de algoritmos, cada um com suas próprias vantagens e desvantagens. Os algoritmos de classificação incluem:
+                </p>
+                <ul class="list-disc list-inside space-y-2 text-gray-600 mb-4 pl-4">
+                    <li><strong>Árvores de Decisão:</strong> Uma estrutura de árvore onde cada nó interno representa um teste em um atributo, cada ramo representa o resultado do teste, e cada folha representa uma classe.</li>
+                    <li><strong>Máquinas de Vetores de Suporte (SVM):</strong> Utilizam um hiperplano em um espaço de alta dimensão para separar diferentes classes.</li>
+                    <li><strong>Redes Neurais:</strong> Modelos inspirados no funcionamento do cérebro humano, capazes de capturar padrões complexos.</li>
+                </ul>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Para regressão, os algoritmos populares incluem:
+                </p>
+                <ul class="list-disc list-inside space-y-2 text-gray-600 mb-4 pl-4">
+                    <li><strong>Regressão Linear:</strong> Busca a melhor linha reta que descreve a relação entre as variáveis independentes e a variável dependente.</li>
+                    <li><strong>Regressão Logística:</strong> Embora seja usada para classificação, é baseada em um modelo de regressão para prever a probabilidade de um resultado binário.</li>
+                    <li><strong>Redes Neurais:</strong> Também aplicáveis a problemas de regressão, especialmente para capturar relações não-lineares.</li>
+                </ul>
+
+                <h5 class="text-xl font-semibold text-gray-700 mt-4 mb-2">Exemplos Práticos no Contexto de Vendas</h5>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Para ilustrar a aplicação desses conceitos, considere uma empresa que deseja aumentar suas vendas. Utilizando algoritmos de classificação, a empresa pode segmentar seus clientes em grupos como 'provável comprador' e 'não provável comprador', com base em dados como histórico de compras, interações com o site, e dados demográficos. Isso permite que a empresa direcione suas campanhas de marketing de maneira mais eficaz.
+                </p>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Por outro lado, utilizando regressão, a empresa pode prever o valor das vendas futuras com base em fatores como tendências sazonais, campanhas de marketing passadas, e mudanças econômicas. Isso ajuda a empresa a planejar melhor suas estratégias de estoque e produção.
+                </p>
+
+                <h5 class="text-xl font-semibold text-gray-700 mt-4 mb-2">Dicas e Sugestões (Validação e Avaliação)</h5>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Para implementar métodos de validação e avaliação eficazes, é crucial entender as métricas adequadas para cada tipo de problema. No contexto de classificação, algumas métricas comuns incluem:
+                </p>
+                <ul class="list-disc list-inside space-y-2 text-gray-600 mb-4 pl-4">
+                    <li><strong>Acurácia:</strong> A proporção de previsões corretas em relação ao total de previsões.</li>
+                    <li><strong>Precisão:</strong> A proporção de verdadeiros positivos em relação ao total de positivos previstos.</li>
+                    <li><strong>F1-score:</strong> A média harmônica entre precisão e recall, útil quando há um desequilíbrio entre classes.</li>
+                </ul>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Para problemas de regressão, as métricas incluem:
+                </p>
+                <ul class="list-disc list-inside space-y-2 text-gray-600 mb-4 pl-4">
+                    <li><strong>Erro Médio Absoluto (MAE):</strong> A média das diferenças absolutas entre as previsões e os valores reais.</li>
+                    <li><strong>Erro Quadrático Médio (MSE):</strong> A média dos quadrados das diferenças entre as previsões e os valores reais.</li>
+                    <li><strong>Coeficiente de Determinação (R²):</strong> Mede a proporção da variância dos dados que é explicada pelo modelo.</li>
+                </ul>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    A <strong>validação cruzada</strong> é uma técnica essencial para avaliar a capacidade de generalização de um modelo. Consiste em dividir o conjunto de dados em partes, treinando o modelo em algumas delas e testando em outras, garantindo que o modelo não esteja superajustado aos dados de treinamento.
+                </p>
+
+                <h4 class="text-2xl font-semibold text-gray-700 mt-6 mb-3">Conclusão</h4>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Neste texto, exploramos as diferenças fundamentais entre algoritmos de classificação e regressão, destacando suas aplicações no contexto de vendas. Discutimos também a importância de métodos de validação e avaliação, como a validação cruzada e métricas específicas, para assegurar a eficácia dos modelos preditivos. Compreender essas diferenças e aplicar as técnicas adequadas é crucial para o desenvolvimento de soluções eficazes em ciência de dados, especialmente em um ambiente competitivo como o de vendas.
+                </p>
+
+                <h4 class="text-2xl font-semibold text-gray-700 mt-6 mb-3">Pontos Principais</h4>
+                <ul class="list-disc list-inside space-y-2 text-gray-600 mb-4 pl-4">
+                    <li>Classificação identifica categorias de dados; regressão prevê valores contínuos.</li>
+                    <li>Algoritmos de classificação incluem árvores de decisão, SVM e redes neurais.</li>
+                    <li>Regressão utiliza métodos como regressão linear e redes neurais para previsões.</li>
+                    <li>Métricas como acurácia e F1-score avaliam modelos de classificação e regressão.</li>
+                    <li>Validação cruzada é essencial para garantir a eficácia e generalização dos modelos.</li>
+                </ul>
+
+                <h4 class="text-2xl font-semibold text-gray-700 mt-6 mb-3">Vídeo de Apoio</h4>
+                <div class="relative rounded-lg overflow-hidden shadow-md" style="padding-bottom: 56.25%;"> <!-- 16:9 Aspect Ratio -->
+                    <iframe class="absolute top-0 left-0 w-full h-full" src="https://www.youtube.com/embed/A0FtfcK6Rdc" title="A Regressão Linear - Algoritmos de Aprendizado de Máquinas" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+
+            </div>
+            <!-- FIM DO NOVO CONTEÚDO -->
+
+        </section>
+
+        <section id="bias-variance" class="mb-16">
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-4">O Equilíbrio Perfeito: Viés vs. Variância</h2>
+            <p class="text-center text-gray-700 max-w-3xl mx-auto mb-10">
+                O dilema fundamental no aprendizado de máquina é encontrar o equilíbrio entre um modelo muito simples (alto viés) e um muito complexo (alta variância). Nosso objetivo é minimizar o erro total.
+            </p>
+            <div class="bg-white p-8 rounded-xl shadow-lg">
+                <div class="chart-container">
+                    <canvas id="biasVarianceChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section id="toolkit" class="mb-16">
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-10">Nosso Arsenal de Ferramentas</h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 max-w-6xl mx-auto">
+                <button data-tool="Python" class="tool-card bg-white p-6 rounded-xl shadow-lg text-center transition-transform hover:scale-105 cursor-pointer"><p class="text-5xl mb-3">🐍</p><h3 class="font-bold text-lg">Python</h3></button>
+                <button data-tool="Pandas" class="tool-card bg-white p-6 rounded-xl shadow-lg text-center transition-transform hover:scale-105 cursor-pointer"><p class="text-5xl mb-3">🐼</p><h3 class="font-bold text-lg">Pandas</h3></button>
+                <button data-tool="NumPy" class="tool-card bg-white p-6 rounded-xl shadow-lg text-center transition-transform hover:scale-105 cursor-pointer"><p class="text-5xl mb-3">🔢</p><h3 class="font-bold text-lg">NumPy</h3></button>
+                <button data-tool="Matplotlib" class="tool-card bg-white p-6 rounded-xl shadow-lg text-center transition-transform hover:scale-105 cursor-pointer"><p class="text-5xl mb-3">📊</p><h3 class="font-bold text-lg">Matplotlib</h3></button>
+                <button data-tool="Seaborn" class="tool-card bg-white p-6 rounded-xl shadow-lg text-center transition-transform hover:scale-105 cursor-pointer"><p class="text-5xl mb-3">📈</p><h3 class="font-bold text-lg">Seaborn</h3></button>
+                <button data-tool="Scikit-learn" class="tool-card bg-white p-6 rounded-xl shadow-lg text-center transition-transform hover:scale-105 cursor-pointer"><p class="text-5xl mb-3">⚙️</p><h3 class="font-bold text-lg">Scikit-learn</h3></button>
+                <button data-tool="TensorFlow" class="tool-card bg-white p-6 rounded-xl shadow-lg text-center transition-transform hover:scale-105 cursor-pointer"><p class="text-5xl mb-3">🧠</p><h3 class="font-bold text-lg">TensorFlow</h3></button>
+
+                <button data-tool="Keras" class="tool-card bg-white p-6 rounded-xl shadow-lg text-center transition-transform hover:scale-105 cursor-pointer col-span-2 md:col-span-1"><p class="text-5xl mb-3">🧱</p><h3 class="font-bold text-lg">Keras</h3></button>
+            </div>
+        </section>
+        
+        <section id="project-suggester" class="mb-16 text-center">
+            <div class="max-w-3xl mx-auto bg-white p-8 rounded-xl shadow-lg">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Precisa de Inspiração?</h2>
+                <p class="text-gray-700 mb-6">Aplique seus conhecimentos em um projeto prático. Clique no botão abaixo para que a IA gere uma sugestão de projeto final, incluindo descrição, tipo de dados e os passos a seguir.</p>
+                <button id="generate-project" class="bg-indigo-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-indigo-700 transition-colors text-lg">✨ Sugira um Projeto Final</button>
+                <div id="project-output" class="mt-6 text-left"></div>
+            </div>
+        </section>
+
+        <!-- SEÇÃO DO QUIZ ADICIONADA -->
+        <section id="quiz-interactive" class="mb-16">
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-10">Quiz Interativo</h2>
+            <div id="quiz-container" class="max-w-3xl mx-auto bg-white p-8 rounded-xl shadow-lg">
+                <!-- Quiz content will be injected here by JavaScript -->
+            </div>
+        </section>
+
+    </main>
+    
+    <footer class="text-center py-8 text-gray-500">
+        <p>FACULDADES METROPOLITANAS UNIDAS – FMU - 2ºSemestre 2025</p>
+    </footer>
+
+    <!-- Modal de Ferramentas -->
+    <div id="tool-modal" class="fixed inset-0 bg-black bg-opacity-70 z-50 flex justify-center items-center p-4 hidden">
+        <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center p-6 border-b">
+                <h3 id="modal-title" class="text-3xl font-bold text-gray-800"></h3>
+                <button id="modal-close-btn" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
+            </div>
+            <div class="p-6">
+                <h4 class="text-xl font-semibold text-gray-700 mb-2">Explicação Detalhada</h4>
+                <p id="modal-explanation" class="text-gray-700 leading-relaxed mb-6"></p>
+
+                <h4 class="text-xl font-semibold text-gray-700 mb-3">Exemplo de Código</h4>
+                <div class="bg-gray-900 text-white p-4 rounded-lg overflow-x-auto">
+                    <pre><code id="modal-code" class="language-python"></code></pre>
+                </div>
+
+                <a id="modal-doc-link" href="#" target="_blank" rel="noopener noreferrer" class="mt-8 inline-block w-full text-center bg-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors">
+                    Ver Documentação Oficial
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const courseData = [
+                { title: "1. Fundamentos de Estatística e Probabilidade", content: `<h3 class="text-2xl font-bold text-gray-800 mb-4">A Base de Tudo</h3><p class="text-gray-700 mb-4">Por que começar aqui? A estatística é a linguagem que os modelos usam para interpretar os dados e fazer previsões. É o alicerce para construirmos modelos robustos e confiáveis.</p><ul class="list-disc list-inside space-y-2 text-gray-600"><li><strong>Medidas de tendência central:</strong> Média, mediana.</li><li><strong>Medidas de dispersão:</strong> Variância, desvio padrão.</li><li><strong>Correlação vs. Causalidade:</strong> Entender a diferença crucial.</li><li><strong>Distribuições de probabilidade:</strong> Como a incerteza é quantificada.</li></ul>` },
+                { title: "2. Conceitos de Regressão e Classificação", content: `<h3 class="text-2xl font-bold text-gray-800 mb-4">O Coração da Disciplina</h3><p class="text-gray-700 mb-4">Aqui, aprendemos as duas principais tarefas do aprendizado supervisionado: prever categorias e prever valores numéricos. É a base para resolver uma vasta gama de problemas do mundo real.</p><p class="text-gray-600"><strong>Classificação:</strong> Prever uma categoria (ex: spam ou não spam).</p><p class="text-gray-600"><strong>Regressão:</strong> Prever um valor contínuo (ex: preço de um imóvel).</p>` },
+                { title: "3. Python, Pandas e NumPy", content: `<h3 class="text-2xl font-bold text-gray-800 mb-4">Nosso Arsenal</h3><p class="text-gray-700 mb-4">Para construir modelos, primeiro precisamos domar os dados. Estas são as ferramentas essenciais para carregar, limpar, transformar e manipular dados de forma eficiente.</p><ul class="list-disc list-inside space-y-2 text-gray-600"><li><strong>Python:</strong> A linguagem que unifica todo o processo.</li><li><strong>Pandas:</strong> Essencial para trabalhar com dados em tabelas (DataFrames).</li><li><strong>NumPy:</strong> A base para computação numérica de alta performance.</li></ul>` },
+                { title: "4. Pré-processamento de Dados", content: `<h3 class="text-2xl font-bold text-gray-800 mb-4">A Arte da Preparação</h3><p class="text-gray-700 mb-4">"Lixo entra, lixo sai". A qualidade do seu modelo depende diretamente da qualidade dos seus dados. Nesta etapa, garantimos que os dados estão no formato ideal para a modelagem.</p><ul class="list-disc list-inside space-y-2 text-gray-600"><li><strong>Limpeza:</strong> Lidar com dados faltantes, duplicados ou incorretos.</li><li><strong>Normalização:</strong> Colocar características em uma mesma escala.</li><li><strong>Transformação:</strong> Converter dados categóricos em numéricos.</li></ul>` },
+                { title: "5. Análise com Matplotlib e Seaborn", content: `<h3 class="text-2xl font-bold text-gray-800 mb-4">Tornando Dados Visuais</h3><p class="text-gray-700 mb-4">Uma imagem vale mais que mil linhas de dados. A visualização nos ajuda a entender padrões, identificar anomalias e comunicar nossos achados de forma clara e impactante.</p><ul class="list-disc list-inside space-y-2 text-gray-600"><li><strong>Matplotlib:</strong> A biblioteca fundamental para criar gráficos.</li><li><strong>Seaborn:</strong> Facilita a criação de gráficos estatísticos mais bonitos e informativos.</li></ul>` },
+                { title: "6. Engenharia de Características", content: `<h3 class="text-2xl font-bold text-gray-800 mb-4">Melhorando os Ingredientes</h3><p class="text-gray-700 mb-4">Esta é a etapa criativa onde transformamos o conhecimento do negócio em poder preditivo. Criamos novas características (features) a partir dos dados brutos para melhorar a performance do modelo.</p><p class="text-gray-600"><strong>Exemplo:</strong> A partir de uma data de nascimento, podemos criar a característica "idade".</p>` },
+                { title: "7. Modelagem com Scikit-learn, TensorFlow e Keras", content: `<h3 class="text-2xl font-bold text-gray-800 mb-4">Mãos à Obra</h3><p class="text-gray-700 mb-4">Aqui é onde a mágica acontece: a construção dos modelos preditivos. Vamos aprender a usar as bibliotecas mais poderosas para treinar, testar e implementar algoritmos de Machine Learning.</p><ul class="list-disc list-inside space-y-2 text-gray-600"><li><strong>Scikit-learn:</strong> Para algoritmos clássicos de Machine Learning.</li><li><strong>TensorFlow & Keras:</strong> Para modelos complexos como Redes Neurais.</li></ul>` },
+                { title: "8. Validação e Métricas de Avaliação", content: `<h3 class="text-2xl font-bold text-gray-800 mb-4">A Prova de Fogo</h3><p class="text-gray-700 mb-4">Como sabemos se o nosso modelo é realmente bom? Não basta "acreditar", precisamos medir e validar seu desempenho de forma objetiva usando métricas e técnicas robustas.</p><ul class="list-disc list-inside space-y-2 text-gray-600"><li><strong>Validação Cruzada:</strong> Para testar a generalização do modelo.</li><li><strong>Métricas de Classificação:</strong> Acurácia, Precisão, Recall, F1-Score.</li><li><strong>Métricas de Regressão:</strong> Erro Quadrático Médio (MSE).</li></ul>` },
+                { title: "9. O Dilema do Viés vs. Variância", content: `<h3 class="text-2xl font-bold text-gray-800 mb-4">O Equilíbrio Perfeito</h3><p class="text-gray-700 mb-4">O desafio central do aprendizado de máquina. Vamos entender o que é subajuste (alto viés) e sobreajuste (alta variância) e como encontrar um modelo que generalize bem para novos dados.</p><p class="text-gray-600">Nosso objetivo é encontrar um modelo com o equilíbrio ideal para minimizar o erro total.</p>` },
+                { title: "10. Documentação e Apresentação de Resultados", content: `<h3 class="text-2xl font-bold text-gray-800 mb-4">Comunicando a Descoberta</h3><p class="text-gray-700 mb-4">Um ótimo modelo com uma comunicação ruim não gera valor. Aprenderemos a documentar nossos projetos e a apresentar os resultados de forma clara e impactante, focando nos insights de negócio.</p><ul class="list-disc list-inside space-y-2 text-gray-600"><li>Documentar o código e a metodologia de forma reproduzível.</li><li>Utilizar Jupyter Notebooks para criar relatórios integrados.</li><li>Apresentar resultados focando em insights e conclusões.</li></ul>` }
+            ];
+
+            const stepsNav = document.getElementById('steps-nav').querySelector('ul');
+            const contentPanel = document.getElementById('content-panel');
+
+            courseData.forEach((item, index) => {
+                const li = document.createElement('li');
+                li.classList.add('relative');
+                li.innerHTML = `
+                    <button data-index="${index}" class="step-button w-full text-left flex items-center gap-4 p-4 rounded-lg border-2 border-gray-300 bg-white hover:bg-gray-100 transition-colors">
+                        <span class="flex-shrink-0 h-10 w-10 flex items-center justify-center rounded-full bg-gray-200 text-gray-700 font-bold">${index + 1}</span>
+                        <span class="font-semibold text-gray-800">${item.title.substring(item.title.indexOf(' ') + 1)}</span>
+                    </button>
+                `;
+                stepsNav.appendChild(li);
+            });
+
+            function updateContent(index) {
+                const topic = courseData[index];
+                contentPanel.innerHTML = `
+                    <div id="topic-base-content">${topic.content}</div>
+                    <button id="explain-topic" data-topic-title="${topic.title.substring(3)}" class="mt-6 w-full bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors">✨ Explique este Tópico</button>
+                    <div id="topic-explanation-output" class="mt-4"></div>
+                `;
+                
+                document.querySelectorAll('.step-button').forEach(btn => {
+                    btn.classList.remove('active-step');
+                    btn.classList.add('bg-white');
+                });
+                
+                const activeButton = document.querySelector(`.step-button[data-index="${index}"]`);
+                activeButton.classList.add('active-step');
+
+                document.getElementById('explain-topic').addEventListener('click', handleExplainTopic);
+            }
+
+            stepsNav.addEventListener('click', (e) => {
+                const button = e.target.closest('.step-button');
+                if (button) {
+                    const index = parseInt(button.dataset.index);
+                    updateContent(index);
+                }
+            });
+
+            updateContent(0);
+            
+            async function callGeminiAPI(prompt, outputElement) {
+                outputElement.innerHTML = '<div class="loader"></div>';
+                
+                const apiKey = ""; 
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+                
+                let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+                const payload = { contents: chatHistory };
+
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`API request failed with status ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        const text = result.candidates[0].content.parts[0].text;
+                        outputElement.innerHTML = `<div class="gemini-output">${text.replace(/```python/g, '<pre class="bg-gray-800 text-white p-4 rounded-md mt-2"><code>').replace(/```/g, '</code></pre>')}</div>`;
+                    } else {
+                        throw new Error("Invalid response structure from API.");
+                    }
+                } catch (error) {
+                    outputElement.innerHTML = `<div class="gemini-output text-red-500">Erro ao gerar conteúdo: ${error.message}</div>`;
+                }
+            }
+            
+            function handleExplainTopic(e) {
+                const topicTitle = e.target.dataset.topicTitle;
+                const prompt = `Explique o conceito de "${topicTitle}" em aprendizado de máquina supervisionado de forma clara e concisa para um estudante universitário. Foque na intuição, no objetivo principal e em exemplos simples.`;
+                const outputElement = document.getElementById('topic-explanation-output');
+                callGeminiAPI(prompt, outputElement);
+            }
+
+            document.getElementById('generate-classification-example').addEventListener('click', () => {
+                const prompt = "Gere um exemplo prático e simples de um problema de CLASSIFICAÇÃO em machine learning. Forneça uma breve descrição do problema (ex: detecção de spam) e um pequeno trecho de código em Python usando pandas e scikit-learn para ilustrar a ideia. O código deve ser apenas demonstrativo.";
+                const outputElement = document.getElementById('classification-example-output');
+                callGeminiAPI(prompt, outputElement);
+            });
+
+            document.getElementById('generate-regression-example').addEventListener('click', () => {
+                const prompt = "Gere um exemplo prático e simples de um problema de REGRESSÃO em machine learning. Forneça uma breve descrição do problema (ex: previsão de preços de imóveis) e um pequeno trecho de código em Python usando pandas e scikit-learn para ilustrar a ideia. O código deve ser apenas demonstrativo.";
+                const outputElement = document.getElementById('regression-example-output');
+                callGeminiAPI(prompt, outputElement);
+            });
+
+            document.getElementById('generate-project').addEventListener('click', () => {
+                const prompt = "Sugira uma ideia de projeto de machine learning supervisionado para um estudante universitário. O projeto deve usar conceitos como pré-processamento, modelagem e avaliação. Forneça um título para o projeto, uma breve descrição, o tipo de dataset que seria necessário (ex: dados de saúde, financeiros, etc.) e os principais passos a serem seguidos, em formato de lista.";
+                const outputElement = document.getElementById('project-output');
+                callGeminiAPI(prompt, outputElement);
+            });
+
+            const ctx = document.getElementById('biasVarianceChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Muito Simples', 'Simples', 'Ideal', 'Complexo', 'Muito Complexo'],
+                    datasets: [{
+                        label: 'Viés (Bias)',
+                        data: [10, 7, 4, 2, 1],
+                        borderColor: 'rgb(59, 130, 246)',
+                        fill: false,
+                        tension: 0.4
+                    }, {
+                        label: 'Variância (Variance)',
+                        data: [1, 2, 3, 7, 11],
+                        borderColor: 'rgb(22, 163, 74)',
+                        fill: false,
+                        tension: 0.4
+                    }, {
+                        label: 'Erro Total',
+                        data: [11, 9, 7, 9, 12],
+                        borderColor: 'rgb(239, 68, 68)',
+                        borderWidth: 3,
+                        borderDash: [5, 5],
+                        fill: false,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Relação entre Complexidade do Modelo e Erro'
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Complexidade do Modelo'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Erro'
+                            },
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // --- TOOLKIT MODAL LOGIC ---
+            const toolkitData = {
+                "Python": {
+                    icon: "🐍",
+                    docLink: "https://docs.python.org/3/",
+                    exampleCode: `
+# Esta é a base de tudo.
+# Podemos criar variáveis e usar funções.
+mensagem = "Olá, Mundo!"
+print(mensagem)
+
+def somar(a, b):
+    return a + b
+
+resultado = somar(5, 10)
+print(f"O resultado da soma é: {resultado}")
+`,
+                    exampleExplanation: "Python é a linguagem de programação que usaremos. Este exemplo mostra o básico: como criar uma variável (mensagem), imprimir algo no console com a função print(), definir uma função personalizada (somar) e usá-la. Sua sintaxe clara e vasta biblioteca de funções a tornam perfeita para ciência de dados."
+                },
+                "Pandas": {
+                    icon: "🐼",
+                    docLink: "https://pandas.pydata.org/docs/",
+                    exampleCode: `
+import pandas as pd
+
+# Criando um dicionário com dados
+dados = {
+    'Nome': ['Ana', 'Bruno', 'Carla'],
+    'Idade': [25, 30, 22]
+}
+
+# Criando um DataFrame (a principal estrutura do Pandas)
+df = pd.DataFrame(dados)
+
+# Exibindo o DataFrame
+print(df)
+
+# Selecionando apenas a coluna 'Nome'
+print(df['Nome'])
+`,
+                    exampleExplanation: "Pandas é a ferramenta essencial para manipulação e análise de dados. Sua principal estrutura é o DataFrame, uma tabela bidimensional (como uma planilha). Este exemplo importa a biblioteca (com o apelido 'pd'), cria um DataFrame a partir de um dicionário e, em seguida, seleciona e exibe a coluna 'Nome'."
+                },
+                "NumPy": {
+                    icon: "🔢",
+                    docLink: "https://numpy.org/doc/",
+                    exampleCode: `
+import numpy as np
+
+# Criando um array NumPy (vetor)
+arr = np.array([1, 2, 3, 4, 5])
+
+# Arrays NumPy permitem operações matemáticas em lote
+arr_multiplicado = arr * 2
+
+print(f"Array original: {arr}")
+print(f"Array multiplicado: {arr_multiplicado}")
+
+# Calculando a média
+media = np.mean(arr)
+print(f"Média: {media}")
+`,
+                    exampleExplanation: "NumPy é a base da computação científica em Python. Ele fornece 'arrays' (vetores e matrizes) que são muito mais rápidos que as listas normais do Python para operações matemáticas. O exemplo mostra a criação de um array e a realização de uma operação 'vetorizada' (multiplicar todos os elementos por 2 de uma só vez) e o cálculo da média."
+                },
+                "Matplotlib": {
+                    icon: "📊",
+                    docLink: "https://matplotlib.org/stable/contents.html",
+                    exampleCode: `
+import matplotlib.pyplot as plt
+
+# Dados de exemplo
+x = [1, 2, 3, 4]
+y = [10, 20, 25, 30]
+
+# Criando um gráfico de linha simples
+plt.plot(x, y)
+
+# Adicionando títulos
+plt.title("Gráfico de Linha Simples")
+plt.xlabel("Eixo X")
+plt.ylabel("Eixo Y")
+
+# Exibindo o gráfico
+plt.show()
+`,
+                    exampleExplanation: "Matplotlib é a biblioteca fundamental para criar visualizações de dados (gráficos) em Python. Este exemplo mostra o fluxo básico: importar a biblioteca (com o apelido 'plt'), definir os dados para os eixos X e Y, usar a função plot() para criar o gráfico, adicionar rótulos e, finalmente, usar show() para exibir a janela do gráfico."
+                },
+                "Seaborn": {
+                    icon: "📈",
+                    docLink: "https://seaborn.pydata.org/",
+                    exampleCode: `
+import seaborn as sns
+import matplotlib.pyplot as plt
+import pandas as pd
+
+# Criando um DataFrame de exemplo
+dados = {'x': [1, 2, 3, 4, 5], 'y': [5, 4, 2, 1, 3]}
+df = pd.DataFrame(dados)
+
+# Criando um gráfico de dispersão (scatterplot)
+# Seaborn se integra muito bem com Pandas
+sns.scatterplot(data=df, x='x', y='y')
+
+# Exibindo o gráfico
+plt.show()
+`,
+                    exampleExplanation: "Seaborn é construído sobre o Matplotlib e torna a criação de gráficos estatísticos mais fácil e bonita. Ele se integra perfeitamente com DataFrames do Pandas. Este exemplo mostra como criar um gráfico de dispersão (scatterplot) de forma muito direta, passando o DataFrame e os nomes das colunas desejadas."
+                },
+                "Scikit-learn": {
+                    icon: "⚙️",
+                    docLink: "https://scikit-learn.org/stable/",
+                    exampleCode: `
+from sklearn.linear_model import LinearRegression
+import numpy as np
+
+# Dados de exemplo (X=features, y=alvo)
+X = np.array([[1], [2], [3]])
+y = np.array([2, 4, 6])
+
+# 1. Inicializar o modelo
+modelo = LinearRegression()
+
+# 2. Treinar o modelo (o 'fit')
+modelo.fit(X, y)
+
+# 3. Fazer uma nova previsão
+nova_previsao = modelo.predict(np.array([[4]]))
+
+print(f"Previsão para o valor 4: {nova_previsao[0]}")
+`,
+                    exampleExplanation: "Scikit-learn (sklearn) é a principal biblioteca para Machine Learning clássico. Quase todos os seus modelos seguem a mesma interface: 1. Inicializar o objeto do modelo (LinearRegression), 2. Treinar o modelo com os dados usando o método .fit(X, y), 3. Fazer previsões em novos dados usando o método .predict()."
+                },
+                "TensorFlow": {
+                    icon: "🧠",
+                    docLink: "https://www.tensorflow.org/api_docs/python/tf",
+                    exampleCode: `
+import tensorflow as tf
+
+# TensorFlow pode ser usado para operações matemáticas
+# complexas em 'Tensores' (parecido com arrays do NumPy)
+tensor_a = tf.constant([[1.0, 2.0], [3.0, 4.0]])
+tensor_b = tf.constant([[5.0, 6.0], [7.0, 8.0]])
+
+# Multiplicação de matrizes
+resultado = tf.matmul(tensor_a, tensor_b)
+
+print(resultado.numpy())
+`,
+                    exampleExplanation: "TensorFlow é uma poderosa biblioteca para computação numérica e machine learning, sendo a base para Redes Neurais complexas (Deep Learning). Em sua essência, ele opera sobre 'Tensores' (matrizes multidimensionais). Este exemplo mostra uma operação de baixo nível, a multiplicação de duas matrizes (tensores)."
+                },
+                "Keras": {
+                    icon: "🧱",
+                    docLink: "https://keras.io/api/",
+                    exampleCode: `
+import tensorflow as tf
+from tensorflow import keras
+from keras import layers
+
+# Keras é a API de alto nível do TensorFlow
+# para construir Redes Neurais de forma fácil.
+
+# Construindo um modelo simples, camada por camada
+modelo = keras.Sequential([
+    # Camada de entrada (input) e primeira camada oculta
+    layers.Dense(64, activation='relu', input_shape=[10]),
+    # Camada de saída
+    layers.Dense(1)
+])
+
+# Exibindo um resumo da arquitetura do modelo
+modelo.summary()
+`,
+                    exampleExplanation: "Keras é uma interface de alto nível (API) que roda sobre o TensorFlow, tornando a construção de Redes Neurais muito mais simples e intuitiva. Este exemplo mostra a criação de um modelo 'Sequencial' (uma pilha de camadas), onde adicionamos uma camada de entrada/oculta com 64 neurônios e uma camada de saída com 1 neurônio."
+                }
+            };
+
+            const toolModal = document.getElementById('tool-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalExplanation = document.getElementById('modal-explanation');
+            const modalCode = document.getElementById('modal-code');
+            const modalDocLink = document.getElementById('modal-doc-link');
+            const modalCloseBtn = document.getElementById('modal-close-btn');
+
+            function openModal(toolName) {
+                const data = toolkitData[toolName];
+                if (!data) return;
+
+                modalTitle.textContent = toolName;
+                modalExplanation.textContent = data.exampleExplanation;
+                modalCode.textContent = data.exampleCode.trim();
+                modalDocLink.href = data.docLink;
+                
+                toolModal.classList.remove('hidden');
+            }
+
+            function closeModal() {
+                toolModal.classList.add('hidden');
+            }
+
+            document.querySelectorAll('.tool-card').forEach(card => {
+                card.addEventListener('click', (e) => {
+                    const toolName = e.currentTarget.dataset.tool;
+                    openModal(toolName);
+                });
+            });
+
+            modalCloseBtn.addEventListener('click', closeModal);
+            toolModal.addEventListener('click', (e) => {
+                if (e.target === toolModal) {
+                    closeModal();
+                }
+            });
+
+            // --- QUIZ LOGIC START ---
+            const quizContainer = document.getElementById('quiz-container');
+            const quizData = [
+                {
+                    question: "Qual das seguintes opções representa um tipo de problema em aprendizado de máquina supervisionado?",
+                    options: ["Classificação", "Agrupamento", "Reforço", "Mineração de Dados"],
+                    correctAnswer: "Classificação",
+                    rationale: "A classificação é um problema comum em aprendizado de máquina supervisionado, onde se prevê a categoria a que uma observação pertence.",
+                    category: "Conceitos Fundamentais"
+                },
+                {
+                    question: "Qual algoritmo é utilizado principalmente para problemas de classificação?",
+                    options: ["Regressão Linear", "Máquinas de Vetores de Suporte (SVM)", "K-means", "Árvores de Regressão"],
+                    correctAnswer: "Máquinas de Vetores de Suporte (SVM)",
+                    rationale: "SVM é um algoritmo popular utilizado para problemas de classificação, separando classes em um espaço de alta dimensão.",
+                    category: "Conceitos Fundamentais"
+                },
+                {
+                    question: "Qual é a principal diferença entre classificação e regressão em aprendizado de máquina?",
+                    options: [
+                        "A classificação prevê categorias, enquanto a regressão prevê valores contínuos.",
+                        "A classificação utiliza dados não rotulados, enquanto a regressão utiliza dados rotulados.",
+                        "A classificação é sempre complexa, enquanto a regressão é sempre simples.",
+                        "A regressão é uma técnica de aprendizado não supervisionado."
+                    ],
+                    correctAnswer: "A classificação prevê categorias, enquanto a regressão prevê valores contínuos.",
+                    rationale: "Essa é a principal diferença, onde a classificação lida com categorias e a regressão com variáveis numéricas.",
+                    category: "Conceitos Fundamentais"
+                },
+                 {
+                    question: "Qual é a definição de um sistema de aprendizado de máquina, segundo Mitchell (1997)?",
+                    options: [
+                        "Um programa que não pode aprender a partir de dados.",
+                        "Um programa de computador que melhora seu desempenho em uma tarefa T, com base em experiência E.",
+                        "Um algoritmo que só é iniciado quando os dados são introduzidos.",
+                        "Um programa que não utiliza dados na sua operação."
+                    ],
+                    correctAnswer: "Um programa de computador que melhora seu desempenho em uma tarefa T, com base em experiência E.",
+                    rationale: "Essa é exatamente a definição proposta por Mitchell, enfatizando a capacidade de adaptação dos sistemas de aprendizado de máquina.",
+                    category: "Conceitos Fundamentais"
+                },
+                {
+                    question: "Qual das seguintes técnicas é uma estratégia comum para tratar valores ausentes nos dados?",
+                    options: [ "Repetição dos dados faltantes", "Imputação com médias ou medianas", "Eliminar todos os dados ou características", "Ajustar dados à variabilidade" ],
+                    correctAnswer: "Imputação com médias ou medianas",
+                    rationale: "A imputação é uma técnica comum para lidar com valores ausentes em dados, preenchendo-os com valores estatísticos.",
+                    category: "Pré-processamento"
+                },
+                {
+                    question: "Por que é importante documentar o processo de coleta e pré-processamento de dados em um projeto de ciência de dados?",
+                    options: [ "Para garantir que a análise seja feita rapidamente, sem atrasos.", "Para permitir a reprodutibilidade e compreensão do que foi feito.", "Para evitar a coleta de dados desnecessários.", "Para aumentar a complexidade do projeto." ],
+                    correctAnswer: "Para permitir a reprodutibilidade e compreensão do que foi feito.",
+                    rationale: "A documentação é crucial para a reprodutibilidade e para que outros possam entender as decisões do processo.",
+                    category: "Pré-processamento"
+                },
+                {
+                    question: "Como a normalização afeta os dados?",
+                    options: [ "Ela garante que todos os dados sejam comparáveis.", "Ela aumenta o número de variáveis no conjunto de dados.", "Ela remove outliers do conjunto de dados.", "Ela altera permanentemente os dados originais." ],
+                    correctAnswer: "Ela garante que todos os dados sejam comparáveis.",
+                    rationale: "A normalização é importante para assegurar que diferentes variáveis possam ser comparadas adequadamente.",
+                    category: "Pré-processamento"
+                },
+                 {
+                    question: "Qual é a função do tratamento de outliers no contexto de aprendizado de máquina?",
+                    options: [ "Remover todos os dados do conjunto.", "Identificar e eliminar valores que se distanciam significativamente da média.", "Aumentar a quantidade de dados disponíveis.", "Receber inputs externos para avaliar os dados." ],
+                    correctAnswer: "Identificar e eliminar valores que se distanciam significativamente da média.",
+                    rationale: "O tratamento de outliers envolve identificar e tratar valores que não se encaixam na distribuição dos dados.",
+                    category: "Pré-processamento"
+                },
+                {
+                    question: "O que é a normalização de dados e por que é importante?",
+                    options: [ "É o processo de alterar os dados para uma nova forma funcional.", "É a padronização dos dados para que cada característica tenha a mesma escala.", "É uma técnica para criar novos dados a partir dos existentes.", "É o processo de eliminar valores ausentes." ],
+                    correctAnswer: "É a padronização dos dados para que cada característica tenha a mesma escala.",
+                    rationale: "A normalização é essencial para modelos que são sensíveis à escala dos dados.",
+                    category: "Pré-processamento"
+                },
+                 {
+                    question: "Qual é a principal intenção do pré-processamento de dados em projetos de Machine Learning?",
+                    options: [ "Remover dados desnecessários do conjunto de dados.", "Factorear os dados para melhorar sua aparência.", "Preparar dados brutos para que sejam analisados corretamente.", "Aumentar o número de variáveis no conjunto de dados." ],
+                    correctAnswer: "Preparar dados brutos para que sejam analisados corretamente.",
+                    rationale: "O pré-processamento tem como intenção preparar os dados para que possam ser utilizados de forma eficaz em modelos de Machine Learning.",
+                    category: "Pré-processamento"
+                },
+                {
+                    question: "Qual é uma técnica comum utilizada na limpeza de dados?",
+                    options: [ "Normalização de dados.", "Imputação de dados ausentes.", "Redução de dimensionalidade.", "Codificação de variáveis categóricas." ],
+                    correctAnswer: "Imputação de dados ausentes.",
+                    rationale: "A imputação é uma técnica utilizada para substituir valores ausentes por estimativas, sendo uma parte importante do processo de limpeza de dados.",
+                    category: "Pré-processamento"
+                },
+                {
+                    question: "Qual é a razão para se realizar a normalização de dados?",
+                    options: [ "Para aumentar a quantidade de dados brutos.", "Para fazer com que os dados fiquem em uma faixa específica.", "Para remover outliers do conjunto de dados.", "Para transformar dados em texto legível." ],
+                    correctAnswer: "Para fazer com que os dados fiquem em uma faixa específica.",
+                    rationale: "A normalização ajusta os valores dos dados para ficarem em um intervalo específico, facilitando a análise.",
+                    category: "Pré-processamento"
+                },
+                {
+                    question: "Qual a melhor prática para a documentação durante o pré-processamento?",
+                    options: [ "Registrar as etapas de transformações realizadas.", "Evitar anotações para não convolar o processo.", "Manter os dados em formato brutos sem modificações.", "Limitar a documentação para apenas resultados finais." ],
+                    correctAnswer: "Registrar as etapas de transformações realizadas.",
+                    rationale: "Documentar as etapas realizadas no pré-processamento é essencial para garantir a reprodutibilidade e facilitar colaborações futuras.",
+                    category: "Pré-processamento"
+                },
+                {
+                    question: "O que caracteriza a detecção de outliers?",
+                    options: [ "A identificação de valores que são inexpressivos para a análise.", "A verificação de dados ausentes no conjunto de dados.", "Valores que se desviam significativamente dos outros dados no conjunto.", "A normalização de cada dado para a mesma escala." ],
+                    correctAnswer: "Valores que se desviam significativamente dos outros dados no conjunto.",
+                    rationale: "Outliers são exatamente definidos como valores que se distanciam substancialmente do resto dos dados, podendo afetar a análise.",
+                    category: "Pré-processamento"
+                },
+                {
+                    question: "Qual é a definição de probabilidade?",
+                    options: [ "É uma medida da certeza de um evento ocorrer.", "É uma medida da incerteza associada a eventos ou resultados.", "É a soma de todos os resultados de um experimento aleatório.", "É um evento que já ocorreu no passado." ],
+                    correctAnswer: "É uma medida da incerteza associada a eventos ou resultados.",
+                    rationale: "A probabilidade de um evento reflete a incerteza sobre sua ocorrência.",
+                    category: "Estatística e Probabilidade"
+                },
+                {
+                    question: "O que é um espaço amostral?",
+                    options: [ "Conjunto de todos os resultados que podem ocorrer em um experimento aleatório.", "Conjunto de resultados que já ocorreram no passado.", "Uma suposição feita sobre um grande grupo de dados.", "A média de um conjunto de dados." ],
+                    correctAnswer: "Conjunto de todos os resultados que podem ocorrer em um experimento aleatório.",
+                    rationale: "O espaço amostral contém todos os possíveis resultados de um experimento.",
+                    category: "Estatística e Probabilidade"
+                },
+                {
+                    question: "O que a estatística descritiva envolve?",
+                    options: [ "A coleta de amostras para testar hipóteses.", "A organização e apresentação de dados de forma informativa.", "A previsão de resultados baseados em dados históricos.", "A análise da relação entre variáveis independentes e dependentes." ],
+                    correctAnswer: "A organização e apresentação de dados de forma informativa.",
+                    rationale: "A estatística descritiva visa resumir e apresentar dados de maneira clara e concisa.",
+                    category: "Estatística e Probabilidade"
+                },
+                {
+                    question: "Qual é o propósito da estatística inferencial?",
+                    options: [ "Descrever características de um conjunto de dados.", "Fazer generalizações sobre uma população a partir de uma amostra.", "Determinar a média de um conjunto de dados.", "Analisar a dispersão dos dados em um conjunto." ],
+                    correctAnswer: "Fazer generalizações sobre uma população a partir de uma amostra.",
+                    rationale: "A inferência estatística permite fazer conclusões sobre uma população ampla usando dados de uma amostra.",
+                    category: "Estatística e Probabilidade"
+                },
+                {
+                    question: "Quais são as principais etapas ao usar a biblioteca scikit-learn?",
+                    options: [ "Coletar dados, treinar o modelo, avaliar, aplicar.", "Ajustar, prever, avaliar.", "Construir, compilar, implementar.", "Documentar, ajustar, limpar os dados." ],
+                    correctAnswer: "Ajustar, prever, avaliar.",
+                    rationale: "Essas são as etapas principais ao interagir com o scikit-learn, seguindo a lógica de desenvolvimento de modelos.",
+                    category: "Ferramentas e Bibliotecas"
+                },
+                {
+                    question: "Quais módulos do scikit-learn ajudam no pré-processamento de dados?",
+                    options: [ "sklearn.preprocessing.", "sklearn.datasets.", "sklearn.model_selection.", "sklearn.metrics." ],
+                    correctAnswer: "sklearn.preprocessing.",
+                    rationale: "O módulo sklearn.preprocessing oferece ferramentas para pré-processamento, como normalização e codificação.",
+                    category: "Ferramentas e Bibliotecas"
+                },
+                {
+                    question: "Qual é a principal diferença entre os algoritmos de classificação e regressão no aprendizado de máquina?",
+                    options: [
+                        "Classificação é para prever categorias, enquanto regressão é para prever valores contínuos.",
+                        "Classificação e regressão são a mesma coisa no aprendizado de máquina.",
+                        "A classificação é usada apenas para problemas de regressão.",
+                        "Regressão é usada para prever classes, enquanto classificação é usada para prever valores numéricos."
+                    ],
+                    correctAnswer: "Classificação é para prever categorias, enquanto regressão é para prever valores contínuos.",
+                    rationale: "Correto! A classificação prevê categorias (como 'sim' ou 'não') e a regressão prevê valores numéricos contínuos.",
+                    category: "Conceitos Fundamentais"
+                },
+                {
+                    question: "Qual das seguintes métricas é usada para avaliar algoritmos de classificação?",
+                    options: [
+                        "Erro Quadrático Médio (MSE)",
+                        "Acurácia",
+                        "Coeficiente de Determinação (R²)",
+                        "Erro Médio Absoluto (MAE)"
+                    ],
+                    correctAnswer: "Acurácia",
+                    rationale: "Correto! Acurácia é uma métrica usada para medir o desempenho de modelos de classificação.",
+                    category: "Métricas e Validação"
+                },
+                {
+                    question: "Em que consiste a validação cruzada?",
+                    options: [
+                        "Dividir o conjunto de dados em uma única parte para treinamento.",
+                        "Repetir o treinamento do modelo várias vezes com diferentes subconjuntos dos dados.",
+                        "Usar o mesmo conjunto de dados para treinar e testar o modelo.",
+                        "Medir a acurácia do modelo apenas uma vez após o treinamento."
+                    ],
+                    correctAnswer: "Repetir o treinamento do modelo várias vezes com diferentes subconjuntos dos dados.",
+                    rationale: "Correto! A validação cruzada treina o modelo em diferentes parte dos dados para avaliar sua capacidade de generalização.",
+                    category: "Métricas e Validação"
+                },
+                {
+                    question: "Qual algoritmo é utilizado para classificação?",
+                    options: [
+                        "Regressão Linear",
+                        "Máquinas de Vetores de Suporte (SVM)",
+                        "Erro Quadrático Médio",
+                        "Arvore de Decisão"
+                    ],
+                    correctAnswer: "Máquinas de Vetores de Suporte (SVM)",
+                    rationale: "Correto! As SVM são algoritmos usados para classificação (assim como Árvores de Decisão).",
+                    category: "Algoritmos"
+                },
+                {
+                    question: "Quando é apropriado usar um modelo de regressão?",
+                    options: [
+                        "Quando o objetivo é prever uma categoria.",
+                        "Quando o objetivo é prever um valor contínuo.",
+                        "Quando o conjunto de dados é pequeno.",
+                        "Quando não se tem dados históricos."
+                    ],
+                    correctAnswer: "Quando o objetivo é prever um valor contínuo.",
+                    rationale: "Correto! A regressão se aplica a problemas onde o resultado é um valor numérico contínuo.",
+                    category: "Conceitos Fundamentais"
+                }
+            ];
+
+            let currentQuestionIndex = 0;
+            let score = 0;
+            let categoryScores = {};
+
+            function initializeQuiz() {
+                currentQuestionIndex = 0;
+                score = 0;
+                categoryScores = {};
+                quizData.forEach(q => {
+                    if (!categoryScores[q.category]) {
+                        categoryScores[q.category] = { correct: 0, total: 0 };
+                    }
+                });
+                loadQuizQuestion();
+            }
+
+            function loadQuizQuestion() {
+                const currentQuestion = quizData[currentQuestionIndex];
+                if (quizContainer) {
+                    quizContainer.innerHTML = `
+                        <div class="mb-6">
+                            <p class="text-gray-600 font-semibold">Pergunta ${currentQuestionIndex + 1} de ${quizData.length}</p>
+                            <h3 id="quiz-question" class="text-2xl font-bold text-gray-800 mt-2">${currentQuestion.question}</h3>
+                        </div>
+                        <div id="quiz-options" class="flex flex-col gap-3">
+                            ${currentQuestion.options.map(option => `
+                                <button class="quiz-option w-full text-left p-4 rounded-lg border-2 border-gray-300 bg-white hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    ${option}
+                                </button>
+                            `).join('')}
+                        </div>
+                        <div id="quiz-feedback" class="mt-6"></div>
+                        <div class="mt-6 text-right">
+                            <button id="quiz-next-btn" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700 transition-colors hidden">Próxima</button>
+                        </div>
+                    `;
+
+                    document.querySelectorAll('.quiz-option').forEach(button => {
+                        button.addEventListener('click', selectQuizAnswer);
+                    });
+                }
+            }
+
+            function selectQuizAnswer(e) {
+                const selectedButton = e.target;
+                const selectedAnswer = selectedButton.textContent.trim();
+                const currentQuestion = quizData[currentQuestionIndex];
+                const isCorrect = selectedAnswer === currentQuestion.correctAnswer;
+                const category = currentQuestion.category;
+                
+                categoryScores[category].total++;
+
+                if (isCorrect) {
+                    score++;
+                    categoryScores[category].correct++;
+                    selectedButton.classList.add('correct');
+                } else {
+                    selectedButton.classList.add('incorrect');
+                }
+
+                document.querySelectorAll('.quiz-option').forEach(button => {
+                    button.disabled = true;
+                    if (button.textContent.trim() === currentQuestion.correctAnswer) {
+                        button.classList.add('correct');
+                    }
+                });
+                
+                const feedbackEl = document.getElementById('quiz-feedback');
+                feedbackEl.innerHTML = `
+                    <div class="p-4 rounded-lg ${isCorrect ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                        <p class="font-bold">${isCorrect ? 'Correto!' : 'Incorreto.'}</p>
+                        <p>${currentQuestion.rationale}</p>
+                    </div>
+                `;
+
+                document.getElementById('quiz-next-btn').classList.remove('hidden');
+            }
+            
+            if (quizContainer) {
+                quizContainer.addEventListener('click', (e) => {
+                    if (e.target.id === 'quiz-next-btn') {
+                        currentQuestionIndex++;
+                        if (currentQuestionIndex < quizData.length) {
+                            loadQuizQuestion();
+                        } else {
+                            showQuizScore();
+                        }
+                    } else if (e.target.id === 'quiz-restart-btn') {
+                        initializeQuiz();
+                    }
+                });
+            }
+
+            function showQuizScore() {
+                let resultsHtml = `
+                    <div class="text-center">
+                        <h3 class="text-3xl font-bold text-gray-800 mb-2">Quiz Finalizado!</h3>
+                        <p class="text-xl text-gray-700 mb-8">Você acertou ${score} de ${quizData.length} perguntas.</p>
+                        <h4 class="text-2xl font-bold text-gray-800 mb-4">Seu Nível de Conhecimento por Tópico:</h4>
+                    </div>
+                    <div class="space-y-4">
+                `;
+
+                for (const category in categoryScores) {
+                    const { correct, total } = categoryScores[category];
+                    if (total > 0) {
+                        const percentage = Math.round((correct / total) * 100);
+                        resultsHtml += `
+                            <div>
+                                <div class="flex justify-between items-center mb-1">
+                                    <h5 class="font-semibold text-gray-700">${category}</h5>
+                                    <p class="text-sm font-medium text-gray-600">${correct} / ${total}</p>
+                                </div>
+                                <div class="progress-bar w-full h-4">
+                                    <div class="progress-bar-inner" style="width: ${percentage}%;"></div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                }
+
+                resultsHtml += `
+                    </div>
+                    <div class="text-center">
+                        <button id="quiz-restart-btn" class="mt-8 bg-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-blue-700 transition-colors text-lg">Tentar Novamente</button>
+                    </div>
+                `;
+
+                if (quizContainer) {
+                    quizContainer.innerHTML = resultsHtml;
+                }
+            }
+            
+            if(quizContainer) {
+                initializeQuiz();
+            }
+            // --- QUIZ LOGIC END ---
+
+        });
+    </script>
+</body>
+</html>
+```eof
+
