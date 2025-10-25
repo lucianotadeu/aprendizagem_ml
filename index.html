@@ -156,8 +156,92 @@
                 </div>
             </div>
 
-            <!-- NOVO CONTEÚDO ADICIONADO ABAIXO - REMOVIDO DESTA SEÇÃO -->
-            
+            <!-- NOVO CONTEÚDO ADICIONADO ABAIXO -->
+            <div class="max-w-5xl mx-auto bg-white p-8 rounded-xl shadow-lg mt-12">
+                <h3 class="text-3xl font-bold text-gray-800 mb-6 border-b pb-4">Classificação versus Regressão: Um Aprofundamento</h3>
+                
+                <h4 class="text-2xl font-semibold text-gray-700 mt-6 mb-3">Introdução</h4>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Nos últimos anos, o campo do aprendizado de máquina tem se expandido rapidamente, oferecendo soluções inovadoras para uma variedade de problemas em diversas áreas. Entre as técnicas mais utilizadas estão os algoritmos de classificação e regressão, que desempenham papéis cruciais no desenvolvimento de modelos preditivos. Este texto tem como objetivo explorar as diferenças entre esses dois tipos de algoritmos, com foco em sua aplicação prática no contexto de vendas, e fornecer orientações sobre como implementar métodos de validação e avaliação para garantir a eficácia dos modelos desenvolvidos.
+                </p>
+
+                <h4 class="text-2xl font-semibold text-gray-700 mt-6 mb-3">Desenvolvimento</h4>
+                
+                <h5 class="text-xl font-semibold text-gray-700 mt-4 mb-2">Conceitos Básicos</h5>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    No aprendizado de máquina, a escolha entre algoritmos de classificação e regressão depende fundamentalmente do tipo de problema que se deseja resolver. Classificação refere-se ao processo de identificar a qual categoria um novo dado pertence, com base em um conjunto de dados de treinamento previamente rotulado. Por exemplo, em um contexto de vendas, um algoritmo de classificação pode ser usado para prever se um cliente potencial comprará ou não um produto, categorizando a previsão como 'compra' ou 'não compra'.
+                </p>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Por outro lado, a regressão é usada quando o objetivo é prever um valor contínuo. No contexto de vendas, um exemplo clássico seria prever o valor de vendas para o próximo trimestre com base em dados históricos. Aqui, o resultado não é uma categoria, mas um valor numérico.
+                </p>
+
+                <h5 class="text-xl font-semibold text-gray-700 mt-4 mb-2">Teorias e Algoritmos Consagrados</h5>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Classificação e regressão são suportadas por uma variedade de algoritmos, cada um com suas próprias vantagens e desvantagens. Os algoritmos de classificação incluem:
+                </p>
+                <ul class="list-disc list-inside space-y-2 text-gray-600 mb-4 pl-4">
+                    <li><strong>Árvores de Decisão:</strong> Uma estrutura de árvore onde cada nó interno representa um teste em um atributo, cada ramo representa o resultado do teste, e cada folha representa uma classe.</li>
+                    <li><strong>Máquinas de Vetores de Suporte (SVM):</strong> Utilizam um hiperplano em um espaço de alta dimensão para separar diferentes classes.</li>
+                    <li><strong>Redes Neurais:</strong> Modelos inspirados no funcionamento do cérebro humano, capazes de capturar padrões complexos.</li>
+                </ul>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Para regressão, os algoritmos populares incluem:
+                </p>
+                <ul class="list-disc list-inside space-y-2 text-gray-600 mb-4 pl-4">
+                    <li><strong>Regressão Linear:</strong> Busca a melhor linha reta que descreve a relação entre as variáveis independentes e a variável dependente.</li>
+                    <li><strong>Regressão Logística:</strong> Embora seja usada para classificação, é baseada em um modelo de regressão para prever a probabilidade de um resultado binário.</li>
+                    <li><strong>Redes Neurais:</strong> Também aplicáveis a problemas de regressão, especialmente para capturar relações não-lineares.</li>
+                </ul>
+
+                <h5 class="text-xl font-semibold text-gray-700 mt-4 mb-2">Exemplos Práticos no Contexto de Vendas</h5>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Para ilustrar a aplicação desses conceitos, considere uma empresa que deseja aumentar suas vendas. Utilizando algoritmos de classificação, a empresa pode segmentar seus clientes em grupos como 'provável comprador' e 'não provável comprador', com base em dados como histórico de compras, interações com o site, e dados demográficos. Isso permite que a empresa direcione suas campanhas de marketing de maneira mais eficaz.
+                </p>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Por outro lado, utilizando regressão, a empresa pode prever o valor das vendas futuras com base em fatores como tendências sazonais, campanhas de marketing passadas, e mudanças econômicas. Isso ajuda a empresa a planejar melhor suas estratégias de estoque e produção.
+                </p>
+
+                <h5 class="text-xl font-semibold text-gray-700 mt-4 mb-2">Dicas e Sugestões (Validação e Avaliação)</h5>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Para implementar métodos de validação e avaliação eficazes, é crucial entender as métricas adequadas para cada tipo de problema. No contexto de classificação, algumas métricas comuns incluem:
+                </p>
+                <ul class="list-disc list-inside space-y-2 text-gray-600 mb-4 pl-4">
+                    <li><strong>Acurácia:</strong> A proporção de previsões corretas em relação ao total de previsões.</li>
+                    <li><strong>Precisão:</strong> A proporção de verdadeiros positivos em relação ao total de positivos previstos.</li>
+                    <li><strong>F1-score:</strong> A média harmônica entre precisão e recall, útil quando há um desequilíbrio entre classes.</li>
+                </ul>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Para problemas de regressão, as métricas incluem:
+                </p>
+                <ul class="list-disc list-inside space-y-2 text-gray-600 mb-4 pl-4">
+                    <li><strong>Erro Médio Absoluto (MAE):</strong> A média das diferenças absolutas entre as previsões e os valores reais.</li>
+                    <li><strong>Erro Quadrático Médio (MSE):</strong> A média dos quadrados das diferenças entre as previsões e os valores reais.</li>
+                    <li><strong>Coeficiente de Determinação (R²):</strong> Mede a proporção da variância dos dados que é explicada pelo modelo.</li>
+                </ul>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    A <strong>validação cruzada</strong> é uma técnica essencial para avaliar a capacidade de generalização de um modelo. Consiste em dividir o conjunto de dados em partes, treinando o modelo em algumas delas e testando em outras, garantindo que o modelo não esteja superajustado aos dados de treinamento.
+                </p>
+
+                <h4 class="text-2xl font-semibold text-gray-700 mt-6 mb-3">Conclusão</h4>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Neste texto, exploramos as diferenças fundamentais entre algoritmos de classificação e regressão, destacando suas aplicações no contexto de vendas. Discutimos também a importância de métodos de validação e avaliação, como a validação cruzada e métricas específicas, para assegurar a eficácia dos modelos preditivos. Compreender essas diferenças e aplicar as técnicas adequadas é crucial para o desenvolvimento de soluções eficazes em ciência de dados, especialmente em um ambiente competitivo como o de vendas.
+                </p>
+
+                <h4 class="text-2xl font-semibold text-gray-700 mt-6 mb-3">Pontos Principais</h4>
+                <ul class="list-disc list-inside space-y-2 text-gray-600 mb-4 pl-4">
+                    <li>Classificação identifica categorias de dados; regressão prevê valores contínuos.</li>
+                    <li>Algoritmos de classificação incluem árvores de decisão, SVM e redes neurais.</li>
+                    <li>Regressão utiliza métodos como regressão linear e redes neurais para previsões.</li>
+                    <li>Métricas como acurácia e F1-score avaliam modelos de classificação e regressão.</li>
+                    <li>Validação cruzada é essencial para garantir a eficácia e generalização dos modelos.</li>
+                </ul>
+
+                <h4 class="text-2xl font-semibold text-gray-700 mt-6 mb-3">Vídeo de Apoio</h4>
+                <div class="relative rounded-lg overflow-hidden shadow-md" style="padding-bottom: 56.25%;"> <!-- 16:9 Aspect Ratio -->
+                    <iframe class="absolute top-0 left-0 w-full h-full" src="https://www.youtube.com/embed/A0FtfcK6Rdc" title="A Regressão Linear - Algoritmos de Aprendizado de Máquinas" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+
+            </div>
             <!-- FIM DO NOVO CONTEÚDO -->
 
         </section>
@@ -247,180 +331,7 @@
                 { title: "7. Modelagem com Scikit-learn, TensorFlow e Keras", content: `<h3 class="text-2xl font-bold text-gray-800 mb-4">Mãos à Obra</h3><p class="text-gray-700 mb-4">Aqui é onde a mágica acontece: a construção dos modelos preditivos. Vamos aprender a usar as bibliotecas mais poderosas para treinar, testar e implementar algoritmos de Machine Learning.</p><ul class="list-disc list-inside space-y-2 text-gray-600"><li><strong>Scikit-learn:</strong> Para algoritmos clássicos de Machine Learning.</li><li><strong>TensorFlow & Keras:</strong> Para modelos complexos como Redes Neurais.</li></ul>` },
                 { title: "8. Validação e Métricas de Avaliação", content: `<h3 class="text-2xl font-bold text-gray-800 mb-4">A Prova de Fogo</h3><p class="text-gray-700 mb-4">Como sabemos se o nosso modelo é realmente bom? Não basta "acreditar", precisamos medir e validar seu desempenho de forma objetiva usando métricas e técnicas robustas.</p><ul class="list-disc list-inside space-y-2 text-gray-600"><li><strong>Validação Cruzada:</strong> Para testar a generalização do modelo.</li><li><strong>Métricas de Classificação:</strong> Acurácia, Precisão, Recall, F1-Score.</li><li><strong>Métricas de Regressão:</strong> Erro Quadrático Médio (MSE).</li></ul>` },
                 { title: "9. O Dilema do Viés vs. Variância", content: `<h3 class="text-2xl font-bold text-gray-800 mb-4">O Equilíbrio Perfeito</h3><p class="text-gray-700 mb-4">O desafio central do aprendizado de máquina. Vamos entender o que é subajuste (alto viés) e sobreajuste (alta variância) e como encontrar um modelo que generalize bem para novos dados.</p><p class="text-gray-600">Nosso objetivo é encontrar um modelo com o equilíbrio ideal para minimizar o erro total.</p>` },
-                { title: "10. Documentação e Apresentação de Resultados", content: `<h3 class="text-2xl font-bold text-gray-800 mb-4">Comunicando a Descoberta</h3><p class="text-gray-700 mb-4">Um ótimo modelo com uma comunicação ruim não gera valor. Aprenderemos a documentar nossos projetos e a apresentar os resultados de forma clara e impactante, focando nos insights de negócio.</p><ul class="list-disc list-inside space-y-2 text-gray-600"><li>Documentar o código e a metodologia de forma reproduzível.</li><li>Utilizar Jupyter Notebooks para criar relatórios integrados.</li><li>Apresentar resultados focando em insights e conclusões.</li></ul>` },
-                { 
-                    title: "11. Classificação vs. Regressão: Aprofundamento", 
-                    content: `
-                    <div class="max-w-5xl mx-auto">
-                        <h3 class="text-3xl font-bold text-gray-800 mb-6 border-b pb-4">Classificação versus Regressão: Um Aprofundamento</h3>
-                        
-                        <h4 class="text-2xl font-semibold text-gray-700 mt-6 mb-3">Introdução</h4>
-                        <p class="text-gray-700 leading-relaxed mb-4">
-                            Nos últimos anos, o campo do aprendizado de máquina tem se expandido rapidamente, oferecendo soluções inovadoras para uma variedade de problemas em diversas áreas. Entre as técnicas mais utilizadas estão os algoritmos de classificação e regressão, que desempenham papéis cruciais no desenvolvimento de modelos preditivos. Este texto tem como objetivo explorar as diferenças entre esses dois tipos de algoritmos, com foco em sua aplicação prática no contexto de vendas, e fornecer orientações sobre como implementar métodos de validação e avaliação para garantir a eficácia dos modelos desenvolvidos.
-                        </p>
-
-                        <h4 class="text-2xl font-semibold text-gray-700 mt-6 mb-3">Desenvolvimento</h4>
-                        
-                        <h5 class="text-xl font-semibold text-gray-700 mt-4 mb-2">Conceitos Básicos</h5>
-                        <p class="text-gray-700 leading-relaxed mb-4">
-                            No aprendizado de máquina, a escolha entre algoritmos de classificação e regressão depende fundamentalmente do tipo de problema que se deseja resolver. Classificação refere-se ao processo de identificar a qual categoria um novo dado pertence, com base em um conjunto de dados de treinamento previamente rotulado. Por exemplo, em um contexto de vendas, um algoritmo de classificação pode ser usado para prever se um cliente potencial comprará ou não um produto, categorizando a previsão como 'compra' ou 'não compra'.
-                        </p>
-                        <p class="text-gray-700 leading-relaxed mb-4">
-                            Por outro lado, a regressão é usada quando o objetivo é prever um valor contínuo. No contexto de vendas, um exemplo clássico seria prever o valor de vendas para o próximo trimestre com base em dados históricos. Aqui, o resultado não é uma categoria, mas um valor numérico.
-                        </p>
-
-                        <h5 class="text-xl font-semibold text-gray-700 mt-4 mb-2">Teorias e Algoritmos Consagrados</h5>
-                        <p class="text-gray-700 leading-relaxed mb-4">
-                            Classificação e regressão são suportadas por uma variedade de algoritmos, cada um com suas próprias vantagens e desvantagens. Os algoritmos de classificação incluem:
-                        </p>
-                        <ul class="list-disc list-inside space-y-2 text-gray-600 mb-4 pl-4">
-                            <li><strong>Árvores de Decisão:</strong> Uma estrutura de árvore onde cada nó interno representa um teste em um atributo, cada ramo representa o resultado do teste, e cada folha representa uma classe.</li>
-                            <li><strong>Máquinas de Vetores de Suporte (SVM):</strong> Utilizam um hiperplano em um espaço de alta dimensão para separar diferentes classes.</li>
-                            <li><strong>Redes Neurais:</strong> Modelos inspirados no funcionamento do cérebro humano, capazes de capturar padrões complexos.</li>
-                        </ul>
-                        <p class="text-gray-700 leading-relaxed mb-4">
-                            Para regressão, os algoritmos populares incluem:
-                        </p>
-                        <ul class="list-disc list-inside space-y-2 text-gray-600 mb-4 pl-4">
-                            <li><strong>Regressão Linear:</strong> Busca a melhor linha reta que descreve a relação entre as variáveis independentes e a variável dependente.</li>
-                            <li><strong>Regressão Logística:</strong> Embora seja usada para classificação, é baseada em um modelo de regressão para prever a probabilidade de um resultado binário.</li>
-                            <li><strong>Redes Neurais:</strong> Também aplicáveis a problemas de regressão, especialmente para capturar relações não-lineares.</li>
-                        </ul>
-
-                        <h5 class="text-xl font-semibold text-gray-700 mt-4 mb-2">Exemplos Práticos no Contexto de Vendas</h5>
-                        <p class="text-gray-700 leading-relaxed mb-4">
-                            Para ilustrar a aplicação desses conceitos, considere uma empresa que deseja aumentar suas vendas. Utilizando algoritmos de classificação, a empresa pode segmentar seus clientes em grupos como 'provável comprador' e 'não provável comprador', com base em dados como histórico de compras, interações com o site, e dados demográficos. Isso permite que a empresa direcione suas campanhas de marketing de maneira mais eficaz.
-                        </p>
-                        <p class="text-gray-700 leading-relaxed mb-4">
-                            Por outro lado, utilizando regressão, a empresa pode prever o valor das vendas futuras com base em fatores como tendências sazonais, campanhas de marketing passadas, e mudanças econômicas. Isso ajuda a empresa a planejar melhor suas estratégias de estoque e produção.
-                        </p>
-
-                        <h5 class="text-xl font-semibold text-gray-700 mt-4 mb-2">Dicas e Sugestões (Validação e Avaliação)</h5>
-                        <p class="text-gray-700 leading-relaxed mb-4">
-                            Para implementar métodos de validação e avaliação eficazes, é crucial entender as métricas adequadas para cada tipo de problema. No contexto de classificação, algumas métricas comuns incluem:
-                        </p>
-                        <ul class="list-disc list-inside space-y-2 text-gray-600 mb-4 pl-4">
-                            <li><strong>Acurácia:</strong> A proporção de previsões corretas em relação ao total de previsões.</li>
-                            <li><strong>Precisão:</strong> A proporção de verdadeiros positivos em relação ao total de positivos previstos.</li>
-                            <li><strong>F1-score:</strong> A média harmônica entre precisão e recall, útil quando há um desequilíbrio entre classes.</li>
-                        </ul>
-                        <p class="text-gray-700 leading-relaxed mb-4">
-                            Para problemas de regressão, as métricas incluem:
-                        </p>
-                        <ul class="list-disc list-inside space-y-2 text-gray-600 mb-4 pl-4">
-                            <li><strong>Erro Médio Absoluto (MAE):</strong> A média das diferenças absolutas entre as previsões e os valores reais.</li>
-                            <li><strong>Erro Quadrático Médio (MSE):</strong> A média dos quadrados das diferenças entre as previsões e os valores reais.</li>
-                            <li><strong>Coeficiente de Determinação (R²):</strong> Mede a proporção da variância dos dados que é explicada pelo modelo.</li>
-                        </ul>
-                        <p class="text-gray-700 leading-relaxed mb-4">
-                            A <strong>validação cruzada</strong> é uma técnica essencial para avaliar a capacidade de generalização de um modelo. Consiste em dividir o conjunto de dados em partes, treinando o modelo em algumas delas e testando em outras, garantindo que o modelo não esteja superajustado aos dados de treinamento.
-                        </p>
-
-                        <h4 class="text-2xl font-semibold text-gray-700 mt-6 mb-3">Conclusão</h4>
-                        <p class="text-gray-700 leading-relaxed mb-4">
-                            Neste texto, exploramos as diferenças fundamentais entre algoritmos de classificação e regressão, destacando suas aplicações no contexto de vendas. Discutimos também a importância de métodos de validação e avaliação, como a validação cruzada e métricas específicas, para assegurar a eficácia dos modelos preditivos. Compreender essas diferenças e aplicar as técnicas adequadas é crucial para o desenvolvimento de soluções eficazes em ciência de dados, especialmente em um ambiente competitivo como o de vendas.
-                        </p>
-
-                        <h4 class="text-2xl font-semibold text-gray-700 mt-6 mb-3">Pontos Principais</h4>
-                        <ul class="list-disc list-inside space-y-2 text-gray-600 mb-4 pl-4">
-                            <li>Classificação identifica categorias de dados; regressão prevê valores contínuos.</li>
-                            <li>Algoritmos de classificação incluem árvores de decisão, SVM e redes neurais.</li>
-                            <li>Regressão utiliza métodos como regressão linear e redes neurais para previsões.</li>
-                            <li>Métricas como acurácia e F1-score avaliam modelos de classificação e regressão.</li>
-                            <li>Validação cruzada é essencial para garantir a eficácia e generalização dos modelos.</li>
-                        </ul>
-
-                        <h4 class="text-2xl font-semibold text-gray-700 mt-6 mb-3">Vídeo de Apoio</h4>
-                        <div class="relative rounded-lg overflow-hidden shadow-md" style="padding-bottom: 56.25%;"> <!-- 16:9 Aspect Ratio -->
-                            <iframe class="absolute top-0 left-0 w-full h-full" src="https://www.youtube.com/embed/A0FtfcK6Rdc" title="A Regressão Linear - Algoritmos de Aprendizado de Máquinas" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                        </div>
-                    </div>
-                    `
-                },
-                { 
-                    title: "12. Validação e generalização", 
-                    content: `
-                    <div class="max-w-5xl mx-auto">
-                        <h3 class="text-3xl font-bold text-gray-800 mb-6 border-b pb-4">Validação e generalização</h3>
-                        
-                        <h4 class="text-2xl font-semibold text-gray-700 mt-6 mb-3">Introdução</h4>
-                        <p class="text-gray-700 leading-relaxed mb-4">
-                            Nos últimos anos, o campo da ciência de dados tem experimentado um crescimento exponencial, impulsionado pela disponibilidade de grandes volumes de dados e pelo avanço das tecnologias de processamento e análise. Nesse contexto, os modelos de aprendizado de máquina (AM) surgem como ferramentas essenciais para a extração de insights e para a realização de previsões em diversas áreas. Uma das competências fundamentais no desenvolvimento de modelos de AM é a validação e generalização, que assegura que os modelos não apenas se ajustem bem aos dados de treinamento, mas também sejam capazes de realizar previsões precisas em novos conjuntos de dados. Este texto tem como objetivo explorar como a validação se apresenta em diferentes contextos e sua importância na construção de modelos robustos e confiáveis.
-                        </p>
-
-                        <h4 class="text-2xl font-semibold text-gray-700 mt-6 mb-3">Desenvolvimento</h4>
-                        
-                        <h5 class="text-xl font-semibold text-gray-700 mt-4 mb-2">Conceitos Fundamentais de Validação e Generalização</h5>
-                        <p class="text-gray-700 leading-relaxed mb-4">
-                            Validação refere-se ao processo de avaliação de um modelo de AM com o objetivo de verificar sua capacidade de previsão em dados não vistos. A validação é crucial para evitar o overfitting, uma situação em que o modelo se ajusta tão bem aos dados de treinamento que perde a capacidade de generalizar para novos dados. O underfitting, por outro lado, ocorre quando o modelo é tão simples que não captura a complexidade dos dados de treinamento, resultando em um desempenho ruim tanto nos dados de treinamento quanto nos de teste.
-                        </p>
-                        <p class="text-gray-700 leading-relaxed mb-4">
-                            Generalização é a capacidade de um modelo de AM aplicar o que aprendeu a partir dos dados de treinamento para realizar previsões em novos dados. Um modelo bem generalizado é aquele que mantém um bom desempenho em diferentes conjuntos de dados, refletindo sua robustez e utilidade prática.
-                        </p>
-
-                        <h5 class="text-xl font-semibold text-gray-700 mt-4 mb-2">Métodos de Validação</h5>
-                        <p class="text-gray-700 leading-relaxed mb-4">
-                            Existem diversos métodos de validação que podem ser aplicados para avaliar a performance de modelos de AM:
-                        </p>
-                        <ul class="list-disc list-inside space-y-2 text-gray-600 mb-4 pl-4">
-                            <li><strong>Validação Cruzada (Cross-Validation):</strong> Este é um dos métodos mais populares e envolve a divisão dos dados em múltiplos subconjuntos, ou "folds". Em cada iteração, um subconjunto é usado como conjunto de validação, enquanto os restantes são usados para treinamento.</li>
-                            <li><strong>Holdout Method:</strong> Neste método, os dados são divididos em dois conjuntos: treinamento e teste. O modelo é treinado no conjunto de treinamento e avaliado no conjunto de teste.</li>
-                            <li><strong>Leave-One-Out Cross-Validation (LOOCV):</strong> Uma forma extrema de validação cruzada, onde apenas um dado é deixado de fora para validação em cada iteração.</li>
-                        </ul>
-
-                        <h5 class="text-xl font-semibold text-gray-700 mt-4 mb-2">Validação em Diferentes Contextos</h5>
-                        <p class="text-gray-700 leading-relaxed mb-4">
-                            A aplicação de métodos de validação pode variar significativamente dependendo do contexto e da natureza dos dados:
-                        </p>
-                        <ul class="list-disc list-inside space-y-2 text-gray-600 mb-4 pl-4">
-                            <li><strong>Dados Balanceados vs. Desequilibrados:</strong> Em dados desequilibrados, a validação deve considerar métricas como precisão, recall e F1-score, para garantir que o modelo não favoreça a classe majoritária.</li>
-                            <li><strong>Dados Temporais:</strong> Em séries temporais, métodos como Time Series Split são mais adequados, pois respeitam a ordem temporal dos dados.</li>
-                            <li><strong>Dados Espaciais:</strong> Em contextos geoespaciais, a validação deve considerar a autocorrelação espacial, usando técnicas como Spatial Cross-Validation.</li>
-                        </ul>
-
-                        <h5 class="text-xl font-semibold text-gray-700 mt-4 mb-2">Importância da Validação para a Generalização</h5>
-                        <p class="text-gray-700 leading-relaxed mb-4">
-                            A validação eficaz é um pré-requisito para garantir a generalização. Sem um processo de validação rigoroso, é impossível ter confiança de que um modelo que se sai bem em dados de treinamento também terá um bom desempenho em dados reais.
-                        </p>
-
-                        <h5 class="text-xl font-semibold text-gray-700 mt-4 mb-2">Dicas e Sugestões para Visualização e Interpretação</h5>
-                        <p class="text-gray-700 leading-relaxed mb-4">
-                            Para aplicar os conceitos de validação e generalização, é essencial utilizar ferramentas que permitam uma análise clara da performance do modelo:
-                        </p>
-                        <ul class="list-disc list-inside space-y-2 text-gray-600 mb-4 pl-4">
-                            <li><strong>Matplotlib e Seaborn:</strong> Utilize para criar gráficos de linhas que mostrem a variação da performance (ex: validação cruzada).</li>
-                            <li><strong>Matrizes de Confusão:</strong> Visualize para entender como o modelo está classificando as diferentes classes.</li>
-                            <li><strong>Curvas ROC e AUC:</strong> Valiosas para avaliar a capacidade do modelo de distinguir entre classes.</li>
-                            <li><strong>Gráficos de Erro Residual:</strong> Para modelos de regressão, visualize os resíduos para identificar padrões.</li>
-                        </ul>
-
-                        <h4 class="text-2xl font-semibold text-gray-700 mt-6 mb-3">Conclusão</h4>
-                        <p class="text-gray-700 leading-relaxed mb-4">
-                            A validação e a generalização são aspectos centrais no desenvolvimento de modelos de aprendizado de máquina. Elas garantem que os modelos sejam não apenas precisos nos dados de treinamento, mas também robustos e aplicáveis em dados do mundo real.
-                        </p>
-
-                        <h4 class="text-2xl font-semibold text-gray-700 mt-6 mb-3">Pontos Principais</h4>
-                        <ul class="list-disc list-inside space-y-2 text-gray-600 mb-4 pl-4">
-                            <li>Validação é crucial para garantir a performance de modelos de aprendizado de máquina.</li>
-                            <li>Diversos métodos de validação, como cross-validation, ajudam a avaliar modelos de forma precisa.</li>
-                            <li>A interpretação dos resultados envolve a visualização clara de métricas de desempenho e previsões.</li>
-                            <li>Bibliotecas como Matplotlib e Seaborn são essenciais para criar gráficos informativos sobre resultados.</li>
-                            <li>Entender a generalização é vital para a aplicação prática dos modelos em dados novos e não vistos.</li>
-                        </ul>
-
-                        <h4 class="text-2xl font-semibold text-gray-700 mt-6 mb-3">Vídeo de Apoio</h4>
-                        <div class="relative rounded-lg overflow-hidden shadow-md" style="padding-bottom: 56.25%;">
-                            <iframe class="absolute top-0 left-0 w-full h-full" src="https://www.youtube.com/embed/_XJTjJ0ZFFE" title="Aula IA - 04 - Generalização, Conjuntos de Treino, Validação e Teste, Sobreajuste (Overfitting)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                        </div>
-
-                        <h4 class="text-2xl font-semibold text-gray-700 mt-6 mb-3">Notícias</h4>
-                        <a href="https://g1.globo.com/inovacao/noticia/2025/09/07/ia-ja-pode-indicar-como-animais-estao-se-sentindo.ghtml" target="_blank" rel="noopener noreferrer" class="block bg-gray-100 p-4 rounded-lg hover:bg-gray-200 transition-colors">
-                            <p class="font-semibold text-blue-600">IA já pode indicar como animais estão se sentindo</p>
-                            <p class="text-sm text-gray-600">g1.globo.com</p>
-                        </a>
-                    </div>
-                    `
-                }
+                { title: "10. Documentação e Apresentação de Resultados", content: `<h3 class="text-2xl font-bold text-gray-800 mb-4">Comunicando a Descoberta</h3><p class="text-gray-700 mb-4">Um ótimo modelo com uma comunicação ruim não gera valor. Aprenderemos a documentar nossos projetos e a apresentar os resultados de forma clara e impactante, focando nos insights de negócio.</p><ul class="list-disc list-inside space-y-2 text-gray-600"><li>Documentar o código e a metodologia de forma reproduzível.</li><li>Utilizar Jupyter Notebooks para criar relatórios integrados.</li><li>Apresentar resultados focando em insights e conclusões.</li></ul>` }
             ];
 
             const stepsNav = document.getElementById('steps-nav').querySelector('ul');
@@ -440,15 +351,9 @@
 
             function updateContent(index) {
                 const topic = courseData[index];
-                let buttonHtml = '';
-                // Não mostrar o botão "Explique este Tópico" para o item 11 (índice 10)
-                if (index < 10) { 
-                    buttonHtml = `<button id="explain-topic" data-topic-title="${topic.title.substring(3)}" class="mt-6 w-full bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors">✨ Explique este Tópico</button>`;
-                }
-
                 contentPanel.innerHTML = `
                     <div id="topic-base-content">${topic.content}</div>
-                    ${buttonHtml}
+                    <button id="explain-topic" data-topic-title="${topic.title.substring(3)}" class="mt-6 w-full bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors">✨ Explique este Tópico</button>
                     <div id="topic-explanation-output" class="mt-4"></div>
                 `;
                 
@@ -460,11 +365,7 @@
                 const activeButton = document.querySelector(`.step-button[data-index="${index}"]`);
                 activeButton.classList.add('active-step');
 
-                // Adicionar o event listener apenas se o botão existir
-                const explainButton = document.getElementById('explain-topic');
-                if (explainButton) {
-                    explainButton.addEventListener('click', handleExplainTopic);
-                }
+                document.getElementById('explain-topic').addEventListener('click', handleExplainTopic);
             }
 
             stepsNav.addEventListener('click', (e) => {
